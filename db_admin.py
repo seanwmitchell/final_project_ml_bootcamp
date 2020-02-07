@@ -52,5 +52,10 @@ def create_table():
             intro VARCHAR(255),
             body TEXT
             );"""))
+    cur = conn.cursor()
+    cur.execute(sql.SQL("""CREATE TABLE tags(
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255)
+            );"""))
     conn.close()
     print("***** table setup.")

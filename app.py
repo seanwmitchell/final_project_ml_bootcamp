@@ -6,6 +6,10 @@ from db_admin import db_check
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import spacy
+nlp = spacy.load("en_core_web_sm")
+from bs4 import BeautifulSoup
+import inflection
 
 # with open('/etc/config.json') as config_file:
 #     config = json.load(config_file)
@@ -57,14 +61,46 @@ def show(story_id):
 
     cur = conn.cursor()
     query = f"""
-    SELECT * FROM stories WHERE id = %s;
+    SELECT * FROM stories WHERE id = {int(story_id)};
     """
-    val = (story_id)
-    cur.execute(query, val)
-    stories = cur.fetchall()
+    cur.execute(query)
+    story = cur.fetchall()[0]
+
+    corpora = story[1] + ". " + story[2] + ". " + story[3]
+
+    corpora_sans_html = BeautifulSoup(corpora, "lxml").text
+
+    final_corpora = corpora_sans_html.replace("'","").replace('"',"").replace('(',"").replace(')',"")
+
+    doc = nlp(final_corpora)
+    
+    # Filter down to raw named entities
+    raw_tags = []
+    raw_tags = set(ent.text for ent in doc.ents)
+
+    # Iterate through named entities
+    filtered_tags = set()
+    for ent in doc.ents:
+        
+         # Filter our unneeded named entities
+        if ent.label_ == "ORG" or ent.label_ == "CARDINAL" and ent.label_ == "PERSON":
+
+            # Singularize the word
+            # word = inflection.singularize(ent.text)
+            word = ent.text
+            
+            # Capitalize the first letter without impacting the rest
+            filtered_tags.add(word[0].capitalize() + word[1:])
+
+    matched_tags = set()
+    for tag in raw_tags:
+        cur.execute(f"SELECT COUNT(*) FROM tags WHERE name = '{tag}';")
+        if cur.fetchall()[0][0] > 0:
+            matched_tags.add(tag)
+
     conn.close()
 
-    return render_template('show.html', stories=stories)
+    return render_template('show.html', story=story, raw_tags=raw_tags, filtered_tags=filtered_tags, matched_tags=matched_tags)
 
 if __name__ == '__main__':
     application.run(debug=True)
