@@ -1,5 +1,5 @@
 # Importing the libraries
-
+import json
 import os
 from flask import Flask, render_template, request, redirect, send_from_directory
 from db_admin import db_check
@@ -11,10 +11,10 @@ nlp = spacy.load("en_core_web_sm")
 from bs4 import BeautifulSoup
 import inflection
 
-# with open('/etc/config.json') as config_file:
-#     config = json.load(config_file)
-# db_username = config.get('DB_USERNAME')
-# db_password = config.get('DB_PASSWORD')
+with open('/etc/config.json') as config_file:
+    config = json.load(config_file)
+db_username = config.get('DB_USERNAME')
+db_password = config.get('DB_PASSWORD')
 
 db_check()
 
@@ -33,9 +33,9 @@ def index():
 def save():
 
     # Production
-    # conn = psycopg2.connect("dbname=final_project host='localhost' user=" + db_username + " password=" + db_password)
+    conn = psycopg2.connect("dbname=final_project host='localhost' user=" + db_username + " password=" + db_password)
     # Development
-    conn = psycopg2.connect("dbname=final_project host='localhost' user='seanm'")
+    # conn = psycopg2.connect("dbname=final_project host='localhost' user='seanm'")
 
     cur = conn.cursor()
     query = f"""
@@ -54,10 +54,10 @@ def save():
 @application.route('/show/<story_id>')
 def show(story_id):
 
-#     # Production
-#     # conn = psycopg2.connect("dbname=final_project host='localhost' user=" + db_username + " password=" + db_password)
-#     # Development
-    conn = psycopg2.connect("dbname=final_project host='localhost' user='seanm'")
+    # Production
+    conn = psycopg2.connect("dbname=final_project host='localhost' user=" + db_username + " password=" + db_password)
+    # Development
+    # conn = psycopg2.connect("dbname=final_project host='localhost' user='seanm'")
 
     cur = conn.cursor()
     query = f"""
