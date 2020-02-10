@@ -100,7 +100,7 @@ def show(story_id):
             discarded.add(ent.text[0].capitalize() + ent.text[1:])
 
     matched_tags = set()
-    for tag in tags:
+    for tag in (tags|people):
         cur.execute(f"SELECT COUNT(*) FROM tags WHERE name ILIKE '{tag}';")
         if cur.fetchall()[0][0] > 0:
             matched_tags.add(tag)
