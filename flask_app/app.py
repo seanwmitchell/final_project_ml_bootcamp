@@ -32,11 +32,7 @@ def index():
 @application.route('/save', methods=['POST'])
 def save():
 
-    # Production
     conn = psycopg2.connect("dbname=final_project host='localhost' user=" + db_username + " password=" + db_password)
-    # Development
-    # conn = psycopg2.connect("dbname=final_project host='localhost' user='seanm'")
-
     cur = conn.cursor()
     query = f"""
     INSERT INTO stories (title, intro, body) 
@@ -54,10 +50,7 @@ def save():
 @application.route('/show/<story_id>')
 def show(story_id):
 
-    # Production
     conn = psycopg2.connect("dbname=final_project host='localhost' user=" + db_username + " password=" + db_password)
-    # Development
-    # conn = psycopg2.connect("dbname=final_project host='localhost' user='seanm'")
 
     cur = conn.cursor()
     query = f"""
@@ -84,23 +77,14 @@ def show(story_id):
         # Filter our unneeded named entities
         if ent.label_ == "PERSON" and len(ent.text.split()) > 1:
 
-            # Singularize the word
-            # word = inflection.singularize(ent.text)
-            word = ent.text
-            
-            
             # Capitalize the first letter without impacting the rest
-            people.add(word[0].capitalize() + word[1:])
+            people.add(ent.text[0].capitalize() + ent.text[1:])
+
         # Filter our unneeded named entities
-        
         elif ent.label_ == "PRODUCT" or ent.label_ == "ORG" or ent.label_ == "ORDINAL" or ent.label_ == "EVENT" or ent.label_ == "NORP":
 
-            # Singularize the word
-            # word = inflection.singularize(ent.text)
-            word = ent.text
-            
             # Capitalize the first letter without impacting the rest
-            tags.add(word[0].capitalize() + word[1:])
+            tags.add(ent.text[0].capitalize() + ent.text[1:])
         
         elif ent.label_ == "GPE":
 
@@ -112,14 +96,8 @@ def show(story_id):
 
         else:
 
-            # Singularize the word
-            # word = inflection.singularize(ent.text)
-            word = ent.text
-            
             # Capitalize the first letter without impacting the rest
-            discarded.add(word[0].capitalize() + word[1:])
-
-
+            discarded.add(ent.text[0].capitalize() + ent.text[1:])
 
     matched_tags = set()
     for tag in tags:
@@ -134,4 +112,4 @@ def show(story_id):
     return render_template('show.html', story=story, potential_tags=potential_tags, people=people, locations=locations, matched_tags=matched_tags, discarded=discarded)
 
 if __name__ == '__main__':
-    application.run(debug=True)
+    application.run(debug=False)
