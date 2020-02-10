@@ -108,6 +108,7 @@ def show(story_id):
     conn.close()
 
     potential_tags = set(tags.difference(matched_tags))
+    discarded = discarded.difference(potential_tags)
 
     return render_template('show.html', story=story, potential_tags=potential_tags, people=people, locations=locations, matched_tags=matched_tags, discarded=discarded)
 
