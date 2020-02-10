@@ -82,11 +82,12 @@ def show(story_id):
     for ent in doc.ents:
         
         # Filter our unneeded named entities
-        if ent.label_ == "PERSON":
+        if ent.label_ == "PERSON" and len(ent.text.split()) > 1:
 
             # Singularize the word
             # word = inflection.singularize(ent.text)
             word = ent.text
+            
             
             # Capitalize the first letter without impacting the rest
             people.add(word[0].capitalize() + word[1:])
