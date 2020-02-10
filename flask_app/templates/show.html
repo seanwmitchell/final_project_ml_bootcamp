@@ -21,23 +21,34 @@
         </div>
       </div>
       <div class="card pt-3 pl-3 mb-3">
-        <h5 class="card-title">Deduplicated raw tags</h5>
+        <h5 class="card-title">People</h5>
         <div class="d-flex flex-wrap">
-      {% for tag in raw_tags %}
+      {% for tag in people %}
       <div class="card mr-3 mb-3 bg-secondary">
-        
         <div class="text-white px-2 py-1">
           <i class="fas fa-tag mr-1"></i> {{ tag }}
         </div>
       </div>
       {% endfor %}
       </div>
-    </div>
+      </div>
+      <div class="card pt-3 pl-3 mb-3">
+        <h5 class="card-title">Locations</h5>
+        <div class="d-flex flex-wrap">
+      {% for tag in locations %}
+      <div class="card mr-3 mb-3 bg-secondary">
+        <div class="text-white px-2 py-1">
+          <i class="fas fa-tag mr-1"></i> {{ tag }}
+        </div>
+      </div>
+      {% endfor %}
+      </div>
+      </div>
     <div class="card pt-3 pl-3 mb-3">
-      <h5 class="card-title">Deduplicated filtered tags</h5>
+      <h5 class="card-title">Database matched tags</h5>
       <div class="d-flex flex-wrap">
-    {% for tag in filtered_tags %}
-    <div class="card mr-3 mb-3 bg-secondary">
+    {% for tag in matched_tags %}
+    <div class="card mr-3 mb-3 bg-success">
       <div class="text-white px-2 py-1">
         <i class="fas fa-tag mr-1"></i> {{ tag }}
       </div>
@@ -45,10 +56,22 @@
     {% endfor %}
     </div>
     </div>
-    <div class="card pt-3 pl-3">
-      <h5 class="card-title">Database matched tags</h5>
+    <div class="card pt-3 pl-3 mb-3">
+      <h5 class="card-title">Potential new tags</h5>
       <div class="d-flex flex-wrap">
-    {% for tag in matched_tags %}
+    {% for tag in potential_tags %}
+    <div class="card mr-3 mb-3 bg-secondary">
+      <div class="text-white px-2 py-1">
+        <i class="fas fa-tag mr-1"></i> {{ tag }}
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+  </div>
+    <div class="card pt-3 pl-3">
+      <h5 class="card-title">Discarded tags</h5>
+      <div class="d-flex flex-wrap">
+    {% for tag in discarded %}
     <div class="card mr-3 mb-3 bg-secondary">
       <div class="text-white px-2 py-1">
         <i class="fas fa-tag mr-1"></i> {{ tag }}

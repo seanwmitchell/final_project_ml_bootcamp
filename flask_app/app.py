@@ -74,33 +74,64 @@ def show(story_id):
 
     doc = nlp(final_corpora)
     
-    # Filter down to raw named entities
-    raw_tags = []
-    raw_tags = set(ent.text for ent in doc.ents)
-
     # Iterate through named entities
-    filtered_tags = set()
+    people = set()
+    locations = set()
+    tags = set()
+    discarded = set()
     for ent in doc.ents:
         
-         # Filter our unneeded named entities
-        if ent.label_ == "ORG" or ent.label_ == "CARDINAL" and ent.label_ == "PERSON":
+        # Filter our unneeded named entities
+        if ent.label_ == "PERSON":
 
             # Singularize the word
             # word = inflection.singularize(ent.text)
             word = ent.text
             
             # Capitalize the first letter without impacting the rest
-            filtered_tags.add(word[0].capitalize() + word[1:])
+            people.add(word[0].capitalize() + word[1:])
+        # Filter our unneeded named entities
+        
+        elif ent.label_ == "PRODUCT" or ent.label_ == "ORG" or ent.label_ == "ORDINAL" or ent.label_ == "EVENT" or ent.label_ == "NORP":
+
+            # Singularize the word
+            # word = inflection.singularize(ent.text)
+            word = ent.text
+            
+            # Capitalize the first letter without impacting the rest
+            tags.add(word[0].capitalize() + word[1:])
+        
+        elif ent.label_ == "GPE":
+
+            # Singularize the word
+            # word = inflection.singularize(ent.text)
+            word = ent.text
+            
+            # Capitalize the first letter without impacting the rest
+            locations.add(word[0].capitalize() + word[1:])
+
+        else:
+
+            # Singularize the word
+            # word = inflection.singularize(ent.text)
+            word = ent.text
+            
+            # Capitalize the first letter without impacting the rest
+            discarded.add(word[0].capitalize() + word[1:])
+
+
 
     matched_tags = set()
-    for tag in raw_tags:
-        cur.execute(f"SELECT COUNT(*) FROM tags WHERE name = '{tag}';")
+    for tag in tags:
+        cur.execute(f"SELECT COUNT(*) FROM tags WHERE name ILIKE '{tag}';")
         if cur.fetchall()[0][0] > 0:
             matched_tags.add(tag)
 
     conn.close()
 
-    return render_template('show.html', story=story, raw_tags=raw_tags, filtered_tags=filtered_tags, matched_tags=matched_tags)
+    potential_tags = set(tags.difference(matched_tags))
+
+    return render_template('show.html', story=story, potential_tags=potential_tags, people=people, locations=locations, matched_tags=matched_tags, discarded=discarded)
 
 if __name__ == '__main__':
     application.run(debug=True)
