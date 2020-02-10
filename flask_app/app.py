@@ -105,8 +105,7 @@ def show(story_id):
         elif ent.label_ == "GPE":
 
             # Singularize the word
-            # word = inflection.singularize(ent.text)
-            word = ent.text
+            word = inflection.singularize(ent.text)
             
             # Capitalize the first letter without impacting the rest
             locations.add(word[0].capitalize() + word[1:])
